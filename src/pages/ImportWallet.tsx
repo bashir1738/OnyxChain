@@ -1,11 +1,64 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { HDNodeWallet, Wallet } from 'ethers';
+import { useToast } from '../components/Toast';
 
 function ImportWallet() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [importMethod, setImportMethod] = useState<'seed' | 'privateKey'>('seed');
   const [seedPhrase, setSeedPhrase] = useState('');
   const [privateKey, setPrivateKey] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleImport = async () => {
+    try {
+      setLoading(true);
+      
+      if (importMethod === 'seed') {
+        if (!seedPhrase.trim()) {
+          showToast('Please enter a seed phrase', 'error');
+          setLoading(false);
+          return;
+        }
+
+        // Validate and import seed phrase
+        try {
+          const wallet = HDNodeWallet.fromPhrase(seedPhrase.trim());
+          localStorage.setItem('originalAddress', wallet.address);
+          localStorage.setItem('originalPhrase', seedPhrase.trim());
+          showToast('Wallet imported successfully!', 'success');
+          navigate('/dashboard');
+        } catch (error) {
+          showToast('Invalid seed phrase. Please check and try again.', 'error');
+        }
+      } else {
+        if (!privateKey.trim()) {
+          showToast('Please enter a private key', 'error');
+          setLoading(false);
+          return;
+        }
+
+        // Validate and import private key
+        try {
+          let key = privateKey.trim();
+          if (!key.startsWith('0x')) {
+            key = '0x' + key;
+          }
+          const wallet = new Wallet(key);
+          // For private key import, we'll just store it
+          localStorage.setItem('originalAddress', wallet.address);
+          localStorage.setItem('privateKey', key);
+          showToast('Wallet imported successfully!', 'success');
+          navigate('/dashboard');
+        } catch (error) {
+          showToast('Invalid private key. Please check and try again.', 'error');
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-full bg-black flex flex-col p-6 overflow-y-auto">
@@ -100,10 +153,11 @@ function ImportWallet() {
 
       {/* Import Button */}
       <button
-        onClick={() => navigate('/dashboard')}
-        className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg shadow-blue-600/30 mt-6"
+        onClick={handleImport}
+        disabled={loading}
+        className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg shadow-blue-600/30 mt-6"
       >
-        Import Wallet
+        {loading ? 'Importing...' : 'Import Wallet'}
       </button>
     </div>
   );

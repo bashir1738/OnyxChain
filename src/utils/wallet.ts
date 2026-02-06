@@ -1,8 +1,23 @@
 import { HDNodeWallet, Mnemonic, JsonRpcProvider, parseEther, formatEther } from "ethers";
 
-// Sepolia testnet configuration
-const SEPOLIA_RPC = "https://ethereum-sepolia-rpc.publicnode.com";
-const SEPOLIA_CHAIN_ID = 11155111;
+// Network configurations
+export const NETWORKS = {
+  sepolia: {
+    name: 'Ethereum Sepolia',
+    rpc: 'https://ethereum-sepolia-rpc.publicnode.com',
+    chainId: 11155111,
+  },
+  mainnet: {
+    name: 'Ethereum Mainnet',
+    rpc: 'https://eth.llamarpc.com',
+    chainId: 1,
+  },
+  base: {
+    name: 'Base',
+    rpc: 'https://base.llamarpc.com',
+    chainId: 8453,
+  },
+};
 
 interface WalletVerificationResult {
   isMatch: boolean;
@@ -20,9 +35,24 @@ export interface Transaction {
   type: 'send' | 'receive';
 }
 
-// Get Sepolia provider
+// Get current network from localStorage or default to Sepolia
+export function getCurrentNetwork(): keyof typeof NETWORKS {
+  const network = localStorage.getItem("selectedNetwork") as keyof typeof NETWORKS;
+  return (network && network in NETWORKS) ? network : 'sepolia';
+}
+
+// Set network
+export function setNetwork(network: keyof typeof NETWORKS) {
+  if (network in NETWORKS) {
+    localStorage.setItem("selectedNetwork", network);
+  }
+}
+
+// Get provider for current network
 export function getProvider() {
-  return new JsonRpcProvider(SEPOLIA_RPC, SEPOLIA_CHAIN_ID);
+  const network = getCurrentNetwork();
+  const config = NETWORKS[network];
+  return new JsonRpcProvider(config.rpc, config.chainId);
 }
 
 // Get wallet instance from stored phrase

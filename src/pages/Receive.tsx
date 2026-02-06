@@ -43,21 +43,17 @@ function Receive() {
 
       {/* Content */}
       <div className="flex-1 flex flex-col items-center">
-        {/* Network Badge */}
-        <div className="flex items-center space-x-2 bg-blue-900/20 rounded-full px-4 py-2 mb-6">
-          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-          <span className="text-blue-300 text-sm">Sepolia Testnet</span>
-        </div>
+        
 
         {/* QR Code Placeholder */}
-        <div className="w-56 h-56 bg-white rounded-2xl p-4 mb-6 flex items-center justify-center">
+        {/* <div className="w-56 h-56 bg-white rounded-2xl p-4 mb-6 flex items-center justify-center">
           <div className="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
             <span className="text-gray-500 text-xs">QR Code</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Wallet Address */}
         <div className="w-full max-w-sm">
@@ -80,30 +76,10 @@ function Receive() {
           <span className="text-sm font-medium">Copy Address</span>
         </button>
 
-        {/* Get Testnet ETH */}
-        <a
-          href="https://sepoliafaucet.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center space-x-2 mt-4 text-green-400 hover:text-green-300 transition-colors"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-sm font-medium">Get Free Sepolia ETH</span>
-        </a>
+       
 
         {/* Warning */}
-        <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mt-8 max-w-sm">
-          <div className="flex items-start space-x-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-blue-200/80 text-sm">
-              This is a Sepolia testnet address. Only send Sepolia ETH to this address.
-            </p>
-          </div>
-        </div>
+       
       </div>
 
       {/* Share Button */}

@@ -1,7 +1,10 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
 // import { generateWallet } from "../utils/wallet";
 import { useToast } from "../components/Toast";
+import { getBalance, getTransactions, NETWORKS, getCurrentNetwork, setNetwork } from "../utils/wallet";
+import type { Transaction } from "../utils/wallet";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -9,6 +12,7 @@ function Dashboard() {
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedNetwork, setSelectedNetwork] = useState(getCurrentNetwork());
   const mockAddress: string | null = localStorage.getItem("originalAddress");
 
   useEffect(() => {
@@ -22,7 +26,13 @@ function Dashboard() {
       }
     };
     fetchData();
-  }, [mockAddress]);
+  }, [mockAddress, selectedNetwork]);
+
+  const handleNetworkChange = (network: keyof typeof NETWORKS) => {
+    setNetwork(network);
+    setSelectedNetwork(network);
+    showToast(`Switched to ${NETWORKS[network].name}`, "info");
+  };
 
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -61,29 +71,43 @@ function Dashboard() {
             />
           </div>
         </div>
-        <button
-          onClick={() => navigate("/settings")}
-          className="text-blue-400 hover:text-blue-300 transition-colors">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        </button>
+        <div className="flex items-center space-x-4">
+          {/* Network Selector */}
+          <select
+            value={selectedNetwork}
+            onChange={(e) => handleNetworkChange(e.target.value as keyof typeof NETWORKS)}
+            className="bg-blue-900/20 border border-blue-500/30 w-16 rounded-lg px-3 py-2 text-blue-200 text-sm hover:bg-blue-900/40 transition-colors cursor-pointer"
+          >
+            {Object.entries(NETWORKS).map(([key, value]) => (
+              <option key={key} value={key} className="bg-gray-900 text-white">
+                {value.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => navigate("/settings")}
+            className="text-blue-400 hover:text-blue-300 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Wallet Address */}
@@ -135,13 +159,13 @@ function Dashboard() {
           <p className="text-blue-300 text-sm">Total Balance</p>
           <div className="flex items-center space-x-1">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            <span className="text-blue-300/70 text-xs">Sepolia</span>
+            <span className="text-blue-300/70 text-xs">{NETWORKS[selectedNetwork].name}</span>
           </div>
         </div>
         <h2 className="text-4xl font-bold text-white mb-1">
           {loading ? "..." : `${parseFloat(balance).toFixed(4)} ETH`}
         </h2>
-        <p className="text-blue-300/70 text-sm">Testnet</p>
+        <p className="text-blue-300/70 text-sm">Network: {NETWORKS[selectedNetwork].name}</p>
       </div>
 
       {/* Action Buttons */}
